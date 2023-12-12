@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Login, Register, Home } from "../views";
+import { Login, Register, Home, Settings } from "../views";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +13,7 @@ export default function StackNav() {
             <Stack.Screen name="Home" component={Home} options={optionScreen} />
             <Stack.Screen name="Login" component={Login} options={optionScreen} />
             <Stack.Screen name="Register" component={Register} options={optionScreen} />
+            <Stack.Screen name="Settings" component={Settings} options={optionScreen} />
         </Stack.Navigator>
 
     );

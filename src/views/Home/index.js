@@ -1,10 +1,17 @@
-import {View, Text} from "react-native";
-import {styles} from "./style";
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { styles } from "./style";
 
 export function Home({ navigation }) {
   return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Home Screen</Text>
-      </View>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Settings')}
+      >
+        <Text style={styles.buttonText}>Ustawienia</Text>
+      </TouchableOpacity>
+    </View>
   );
 }

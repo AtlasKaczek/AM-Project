@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Calendar = () => {
-    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
-    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-    const [selectedDay, setSelectedDay] = useState(null);
-    const [selectedMonth, setSelectedMonth] = useState(null);
+const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, onCurrentMonthChange, onCurrentYearChange, onSelectedDayChange, onSelectedMonthChange}) => {
     const currentDay = new Date().getDate();
 
     const daysInMonth = (month, year) => {
@@ -33,20 +29,19 @@ const Calendar = () => {
     };
 
     const prevMonth = () => {
-        setCurrentMonth((prevMonth) => (prevMonth === 1 ? 12 : prevMonth - 1));
-        setCurrentYear((prevYear) => (currentMonth === 1 ? prevYear - 1 : prevYear));
+        onCurrentMonthChange((prevMonth) => (prevMonth === 1 ? 12 : prevMonth - 1));
+        onCurrentYearChange((prevYear) => (currentMonth === 1 ? prevYear - 1 : prevYear));
     };
 
     const nextMonth = () => {
-        setCurrentMonth((prevMonth) => (prevMonth === 12 ? 1 : prevMonth + 1));
-        setCurrentYear((prevYear) => (currentMonth === 12 ? prevYear + 1 : prevYear));
+        onCurrentMonthChange((prevMonth) => (prevMonth === 12 ? 1 : prevMonth + 1));
+        onCurrentYearChange((prevYear) => (currentMonth === 12 ? prevYear + 1 : prevYear));
     };
 
     const handleDayPress = (day) => {
         if (day !== null) {
-            setSelectedDay(day);
-            setSelectedMonth(currentMonth);
-            console.log(`Selected day: ${day} ${currentMonth}`);
+            onSelectedDayChange(day);
+            onSelectedMonthChange(currentMonth);
         }
 
     };

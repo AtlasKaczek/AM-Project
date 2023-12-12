@@ -1,10 +1,44 @@
-import {View} from "react-native";
+import {ScrollView} from "react-native";
+import { useState } from "react";
 import Calendar from "../../components/calendar";
+import EventList from "../../components/eventlist";
 
 export function Month({ navigation }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  
+  const onCurrentMonthChange = (calendarData) => {
+    setCurrentMonth(calendarData);
+  };
+
+  const onCurrentYearChange = (calendarData) => {
+    setCurrentYear(calendarData);
+  };
+
+  const onSelectedDayChange = (calendarData) => {
+    setSelectedDay(calendarData);
+  };
+
+  const onSelectedMonthChange = (calendarData) => {
+    setSelectedMonth(calendarData);
+  };
+
   return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Calendar/>
-      </View>
+      <ScrollView>
+          <Calendar 
+          currentMonth={currentMonth} 
+          currentYear={currentYear} 
+          selectedDay={selectedDay}
+          selectedMonth={selectedMonth}
+          onCurrentMonthChange={onCurrentMonthChange}
+          onCurrentYearChange={onCurrentYearChange}
+          onSelectedDayChange={onSelectedDayChange}
+          onSelectedMonthChange={onSelectedMonthChange}/>
+          <EventList
+          selectedDay={selectedDay}
+          selectedMonth={selectedMonth}/>
+      </ScrollView>
   );
 }

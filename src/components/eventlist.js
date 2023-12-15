@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const EventList = ({ selectedDay, selectedMonth }) => {
+const EventList = ({ selectedDay, selectedMonth, selectedYear }) => {
     const [DayEvents, setDayEvents] = useState([]);
     
     const list = [
@@ -29,7 +29,7 @@ const EventList = ({ selectedDay, selectedMonth }) => {
             ],
         },
         {
-            date: `13/12/2023`,
+            date: `15/12/2023`,
             events: [
                 {
                     name: 'Obiad',
@@ -44,7 +44,7 @@ const EventList = ({ selectedDay, selectedMonth }) => {
     useEffect(() => {
         const getDayEvents = () => {
             const currentDate = new Date().toLocaleDateString('en-GB');
-            const selectedDate = new Date(new Date().getFullYear(), selectedMonth - 1, selectedDay);
+            const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
             
             if (selectedDay === null && selectedMonth === null) {
                 const DayEvents = list.find((item) => item.date === currentDate);
@@ -75,17 +75,12 @@ const EventList = ({ selectedDay, selectedMonth }) => {
 
         const updatedEvents = getDayEvents();
         setDayEvents(updatedEvents);
-    }, [selectedDay, selectedMonth]);
-
-    const changeSelectedDate = () => {
-        selectedDay = 10;
-        selectedMonth = 12;
-    };
+    }, [selectedDay, selectedMonth, selectedYear]);
 
     return (
         <View style={styles.container}>
             <View style={styles.addEventContainer}>
-                <TouchableOpacity style={styles.addEvent} onPress={changeSelectedDate}>
+                <TouchableOpacity style={styles.addEvent}>
                     <Text style={styles.addEventText}>Dodaj wydarzenie</Text>
                 </TouchableOpacity>
             </View>

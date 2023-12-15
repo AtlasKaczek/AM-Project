@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, onCurrentMonthChange, onCurrentYearChange, onSelectedDayChange, onSelectedMonthChange}) => {
+const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, onCurrentMonthChange, onCurrentYearChange, onSelectedDayChange, onSelectedMonthChange, onSelectedYearChange}) => {
     const currentDay = new Date().getDate();
 
     const daysInMonth = (month, year) => {
@@ -42,6 +42,7 @@ const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, onCurr
         if (day !== null) {
             onSelectedDayChange(day);
             onSelectedMonthChange(currentMonth);
+            onSelectedYearChange(currentYear);
         }
 
     };

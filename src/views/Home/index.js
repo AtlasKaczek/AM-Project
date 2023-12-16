@@ -12,6 +12,12 @@ export function Home({ navigation }) {
       >
         <Text style={styles.buttonText}>Ustawienia</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('DrawerNav')}
+      >
+        <Text style={styles.buttonText}>Drawer</Text>
+      </TouchableOpacity>
     </View>
   );
 }

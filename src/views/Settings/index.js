@@ -83,7 +83,7 @@ export function Settings({ navigation }) {
       <ListItem
         icon={require('../../img/Prywatnosc.png')}
         label="Prywatność i Bezpieczeństwo"
-        onPress={() => {/* Dodaj obsługę dotknięcia */}}
+        onPress={() => navigation.navigate('SecuritySettings')}
         rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon2} />}
       />
 

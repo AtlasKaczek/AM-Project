@@ -1,8 +1,7 @@
-import { ScrollView , View, TouchableOpacity, Text } from "react-native";
+import { ScrollView } from "react-native";
 import { useState } from "react";
 import Calendar from "../../components/calendar";
 import EventList from "../../components/eventlist";
-import { styles } from "./style";
 
 export function Month({ navigation }) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
@@ -33,13 +32,6 @@ export function Month({ navigation }) {
 
   return (
     <ScrollView>
-      <View style={styles.blueBar}></View>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text>Tekst</Text> {/* zamienić na obrazek menu */}
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Miesiąc</Text>
-      </View>
       <Calendar
         currentMonth={currentMonth}
         currentYear={currentYear}

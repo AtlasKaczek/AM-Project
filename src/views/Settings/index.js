@@ -6,15 +6,17 @@ import { styles } from "./style";
 const ProfileItem = () => {
   return (
     <TouchableOpacity style={styles.listItem}>
-      <Image
-        source={require('../../img/Profil.png')}
-        style={styles.profileIcon}
-      />
-      <Text style={styles.label}>Profil</Text>
-      <Image
-        source={require('../../img/StrzalkaPrawo.png')}
-        style={styles.chevronIcon}
-      />
+      <View style={styles.profileContainer}>
+        <Image
+          source={require('../../img/Profil.png')}
+          style={styles.profileIcon}
+        />
+        <Text style={styles.label}>Profil</Text>
+        <Image
+          source={require('../../img/StrzalkaPrawo.png')}
+          style={styles.chevronIcon}
+        />
+      </View>
     </TouchableOpacity>
   );
 };
@@ -36,8 +38,9 @@ const SwitchListItem = ({ label, onValueChange, value }) => {
     <View style={styles.switchListItem}>
       <Text style={styles.label}>{label}</Text>
       <Switch
+        style={styles.switch}
         trackColor={{ false: "#767577", true: "#81b0ff" }}
-        thumbColor={value ? "#f5dd4b" : "#f4f3f4"}
+        thumbColor={value ? "#1554F7" : "#f4f3f4"}
         ios_backgroundColor="#3e3e3e"
         onValueChange={onValueChange}
         value={value}
@@ -62,7 +65,7 @@ export function Settings({ navigation }) {
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <Image
             source={require('../../img/strzalka.png')}
-            style={[styles.arrowIcon, { width: 30, height: 30 }]}
+            style={[styles.arrowIcon, { width: 24, height: 24 }]}
           />
         </TouchableOpacity>
         <Text style={styles.headerText}>Ustawienia</Text>
@@ -77,7 +80,7 @@ export function Settings({ navigation }) {
         icon={require('../../img/Prywatnosc.png')}
         label="Prywatność i Bezpieczeństwo"
         onPress={() => {/* Dodaj obsługę dotknięcia */}}
-        rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon} />}
+        rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon2} />}
       />
 
       {/* Subtitle "General" */}
@@ -92,7 +95,7 @@ export function Settings({ navigation }) {
         icon={require('../../img/About.png')}
         label="Polityka Prywatności"
         onPress={() => {/* Dodaj obsługę dotknięcia */}}
-        rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon} />}
+        rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon3} />}
       />
     </View>
   );

@@ -3,9 +3,13 @@ import { View, Text, TouchableOpacity, Image, Switch } from "react-native";
 import { styles } from "./style";
 
 // Komponent dla elementu "Profil" jako elementu listy
-const ProfileItem = () => {
+const ProfileItem = ({ navigation }) => {
+  const handleProfilePress = () => {
+    navigation.navigate('ProfileSettings');
+  };
+
   return (
-    <TouchableOpacity style={styles.listItem}>
+    <TouchableOpacity style={styles.listItem} onPress={handleProfilePress}>
       <View style={styles.profileContainer}>
         <Image
           source={require('../../img/Profil.png')}
@@ -74,7 +78,7 @@ export function Settings({ navigation }) {
       {/* Subtitle "Profil" */}
       <Text style={styles.subtitle}>Profil</Text>
       {/* Element Profil */}
-      <ProfileItem />
+      <ProfileItem navigation={navigation} />
       {/* Element Prywatność */}
       <ListItem
         icon={require('../../img/Prywatnosc.png')}

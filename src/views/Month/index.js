@@ -38,7 +38,7 @@ export function Month({ navigation }) {
         <TouchableOpacity style={styles.backButton}>
           <Text>Tekst</Text> {/* zamienić na obrazek menu */}
         </TouchableOpacity>
-        <Text style={styles.headerText}>Ustawienia</Text>
+        <Text style={styles.headerText}>Miesiąc</Text>
       </View>
       <Calendar
         currentMonth={currentMonth}

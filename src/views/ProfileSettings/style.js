@@ -12,6 +12,8 @@ export const styles = StyleSheet.create({
   },
   arrowIcon: {
     tintColor: 'white',
+    width: 30,
+    height: 30,
   },
   headerText: {
     color: 'white',

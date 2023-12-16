@@ -25,7 +25,7 @@ export function ProfileSettings({ navigation }) {
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <Image
             source={require('../../img/strzalka.png')}
-            style={[styles.arrowIcon, { width: 30, height: 30 }]}
+            style={[styles.arrowIcon]}
           />
         </TouchableOpacity>
         <Text style={styles.headerText}>Ustawienia - Profil</Text>

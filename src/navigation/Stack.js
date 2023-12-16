@@ -19,7 +19,20 @@ export default function StackNav() {
             <Stack.Screen name="SecuritySettings" component={SecuritySettings} options={optionScreen} />
             <Stack.Screen name="DrawerNav" component={DrawerNav} options={optionScreen} />
             <Stack.Screen name="Privacy" component={Privacy} options={optionScreen} />
+            <Stack.Screen name="Splash" component={Splash} options={optionScreen} />
+            <Stack.Screen name="Login" component={Login} options={optionScreen}/>
+            <Stack.Screen name="Register" component={Register} options={optionScreen}/>
         </Stack.Navigator>
-
     );
+
+    // Work in progress SPLSH with flow.  
+    // return (
+    //     <NavigationContainer>
+    //       <Stack.Navigator initialRouteName="Splash" headerMode="none">
+    //         <Stack.Screen name="Splash" component={Splash} />
+    //         <Stack.Screen name="Login" component={Login} />
+    //         <Stack.Screen name="Register" component={Register} />
+    //       </Stack.Navigator>
+    //     </NavigationContainer>
+    //   );
 }

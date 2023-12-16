@@ -15,6 +15,10 @@ export function Profile({ navigation }) {
   const handleNavigateToCalendar = () => {
     navigation.navigate('DrawerNav');
   };
+  const handleNavigateToFriends = () => {
+    navigation.navigate('Friends');
+  };
+  
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -51,7 +55,7 @@ export function Profile({ navigation }) {
       </TouchableOpacity>
 
       {/* Komponent "Znajomi" */}
-      <TouchableOpacity style={styles.listItem}>
+      <TouchableOpacity style={styles.listItem} onPress={handleNavigateToFriends}>
         <Image
           source={require('../../img/znajomi.png')}
           style={styles.icon}

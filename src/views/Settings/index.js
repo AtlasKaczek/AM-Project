@@ -69,7 +69,7 @@ export function Settings({ navigation }) {
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <Image
             source={require('../../img/strzalka.png')}
-            style={[styles.arrowIcon, { width: 24, height: 24 }]}
+            style={[styles.arrowIcon, { width: 30, height: 30 }]}
           />
         </TouchableOpacity>
         <Text style={styles.headerText}>Ustawienia</Text>
@@ -98,7 +98,7 @@ export function Settings({ navigation }) {
       <ListItem
         icon={require('../../img/About.png')}
         label="Polityka Prywatności"
-        onPress={() => {/* Dodaj obsługę dotknięcia */}}
+        onPress={() => navigation.navigate('Privacy')}
         rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon3} />}
       />
     </View>

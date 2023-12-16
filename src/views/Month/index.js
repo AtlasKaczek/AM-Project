@@ -37,6 +37,7 @@ export function Month({ navigation }) {
         currentYear={currentYear}
         selectedDay={selectedDay}
         selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
         onCurrentMonthChange={onCurrentMonthChange}
         onCurrentYearChange={onCurrentYearChange}
         onSelectedDayChange={onSelectedDayChange}

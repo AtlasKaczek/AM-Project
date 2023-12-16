@@ -3,7 +3,7 @@ import { View, Image, StyleSheet, Text } from "react-native";
 
 import { styles } from "./style";
 
-export default function Splash({ navigation }) {
+export function Splash({ navigation }) {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
       navigation.replace("Login");

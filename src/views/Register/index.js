@@ -9,7 +9,7 @@ import {
   CheckBox,
 } from "react-native";
 
-export default function Register({ navigation }) {
+export function Register({ navigation }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

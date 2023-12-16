@@ -30,8 +30,7 @@ export function Friends() {
   const [friendsData, setFriendsData] = useState(initialFriendsData);
 
   const handleAddFriend = () => {
-    // Obsługa dodawania znajomego
-    // Przykład: console.log("Dodaj znajomego");
+    // Dodac obsluge dodawania znajomego
   };
 
   const handleSearch = (text) => {

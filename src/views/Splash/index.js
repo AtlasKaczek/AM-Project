@@ -7,7 +7,7 @@ export function Splash({ navigation }) {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
       navigation.replace("Login");
-    }, 2000);
+    }, 4000);
 
     return () => clearTimeout(splashTimer);
   }, [navigation]);

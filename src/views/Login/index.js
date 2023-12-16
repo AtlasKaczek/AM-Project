@@ -10,6 +10,7 @@ export function Login({ navigation }) {
 
   const handleLogin = () => { 
     console.log('Próba logowania:', username, password);
+    navigation.navigate('Profile');
   };
 
   const navigateToRegister = () => {

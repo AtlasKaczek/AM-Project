@@ -2,29 +2,6 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image, Switch } from "react-native";
 import { styles } from "./style";
 
-// Komponent dla elementu "Profil" jako elementu listy
-const ProfileItem = ({ navigation }) => {
-  const handleProfilePress = () => {
-    navigation.navigate('ProfileSettings');
-  };
-
-  return (
-    <TouchableOpacity style={styles.listItem} onPress={handleProfilePress}>
-      <View style={styles.profileContainer}>
-        <Image
-          source={require('../../img/Profil.png')}
-          style={styles.profileIcon}
-        />
-        <Text style={styles.label}>Profil</Text>
-        <Image
-          source={require('../../img/StrzalkaPrawo.png')}
-          style={styles.chevronIcon}
-        />
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 // Komponent dla elementu listy z ikoną, tekstem i strzałką
 const ListItem = ({ icon, label, onPress, rightElement }) => {
   return (
@@ -78,7 +55,12 @@ export function Settings({ navigation }) {
       {/* Subtitle "Profil" */}
       <Text style={styles.subtitle}>Profil</Text>
       {/* Element Profil */}
-      <ProfileItem navigation={navigation} />
+      <ListItem
+        icon={require('../../img/Profil.png')}
+        label="Profil"
+        onPress={() => navigation.navigate('ProfileSettings')}
+        rightElement={<Image source={require('../../img/StrzalkaPrawo.png')} style={styles.chevronIcon} />}
+      />
       {/* Element Prywatność */}
       <ListItem
         icon={require('../../img/Prywatnosc.png')}

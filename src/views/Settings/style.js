@@ -12,19 +12,11 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 30,
   },
-  profileIcon: {
-    width: 50,
-    height: 50,
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   switchListItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderTopWidth: 1, // Dodana linia górna
-    borderTopColor: '#ccc', // Kolor linii górnej
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
   }, 
   switch: {
     marginLeft: 185,
@@ -35,7 +27,7 @@ export const styles = StyleSheet.create({
     marginRight: 20,
   },
   label: {
-    marginLeft: 18, // Dodana odległość od ikony Profil.png
+    marginLeft: 18,
     fontSize: 17,
   },
   listItem: {
@@ -43,9 +35,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 20,
     paddingLeft: 20,
-    paddingVertical: 15, // Dodana odległość pionowa
-    borderTopWidth: 1, // Dodana linia górna
-    borderTopColor: '#ccc', // Kolor linii górnej
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
   },
   chevronIcon: {
     width: 10,

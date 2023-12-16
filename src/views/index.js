@@ -6,5 +6,6 @@ import {ProfileSettings} from "./ProfileSettings";
 import {SecuritySettings} from "./SecuritySettings";
 import { DrawerNav } from "./DrawerNav";
 import { Privacy } from "./Privacy";
+import { Profile } from "./Profile";
 
-export { Login, Register, Home, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy}
+export { Login, Register, Home, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile}

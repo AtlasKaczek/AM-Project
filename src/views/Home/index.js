@@ -8,15 +8,9 @@ export function Home({ navigation }) {
       <Text>Home Screen</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Settings')}
+        onPress={() => navigation.navigate('Profile')}
       >
-        <Text style={styles.buttonText}>Ustawienia</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('DrawerNav')}
-      >
-        <Text style={styles.buttonText}>Drawer</Text>
+        <Text style={styles.buttonText}>Profile</Text>
       </TouchableOpacity>
     </View>
   );

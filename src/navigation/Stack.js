@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Login, Register, Home, Settings, ProfileSettings, SecuritySettings, DrawerNav } from "../views";
+import { Login, Register, Home, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy } from "../views";
 
 
 const Stack = createNativeStackNavigator();
@@ -18,6 +18,7 @@ export default function StackNav() {
             <Stack.Screen name="ProfileSettings" component={ProfileSettings} options={optionScreen} />
             <Stack.Screen name="SecuritySettings" component={SecuritySettings} options={optionScreen} />
             <Stack.Screen name="DrawerNav" component={DrawerNav} options={optionScreen} />
+            <Stack.Screen name="Privacy" component={Privacy} options={optionScreen} />
         </Stack.Navigator>
 
     );

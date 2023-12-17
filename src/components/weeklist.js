@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
         padding: 12,
         marginBottom: 12,
         minHeight: 100,
-        backgroundColor: '#555',
+        backgroundColor: '#ACDBDF',
     },
     plusButton: {
         marginLeft: 10,

@@ -18,6 +18,9 @@ export function Profile({ navigation }) {
   const handleNavigateToFriends = () => {
     navigation.navigate('Friends');
   };
+  const handleNavigateToFAQ = () => {
+    navigation.navigate('FAQ');
+  };
   
 
   return (
@@ -73,7 +76,7 @@ export function Profile({ navigation }) {
       </TouchableOpacity>
 
       {/* Komponent "FAQ" */}
-      <TouchableOpacity style={styles.listItem}>
+      <TouchableOpacity style={styles.listItem} onPress={handleNavigateToFAQ}>
         <Image
           source={require('../../img/faq.png')}
           style={styles.icon}

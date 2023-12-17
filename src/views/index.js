@@ -9,5 +9,7 @@ import { Splash } from "./Splash";
 import { Profile } from "./Profile";
 import { Friends } from "./Friends";
 import { AddEvent } from "./AddEvent";
+import { AddFriends } from "./AddFriends";
+import { FAQ } from "./FAQ";
 
-export { Login, Register, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile, Friends, Splash, AddEvent }
+export { Login, Register, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile, Friends, Splash, AddFriends, FAQ, AddEvent }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const EventList = ({ selectedDay, selectedMonth, selectedYear }) => {
+const EventList = ({ selectedDay, selectedMonth, selectedYear, onAddEventPress }) => {
     const [DayEvents, setDayEvents] = useState([]);
     
     const list = [
@@ -80,7 +80,7 @@ const EventList = ({ selectedDay, selectedMonth, selectedYear }) => {
     return (
         <View style={styles.container}>
             <View style={styles.addEventContainer}>
-                <TouchableOpacity style={styles.addEvent}>
+                <TouchableOpacity style={styles.addEvent} onPress={() => onAddEventPress()}>
                     <Text style={styles.addEventText}>Dodaj wydarzenie</Text>
                 </TouchableOpacity>
             </View>

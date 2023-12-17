@@ -30,6 +30,14 @@ export function Month({ navigation }) {
     setSelectedYear(calendarData);
   };
 
+  const onAddEventPress = () => {
+    navigation.navigate('AddEvent', {
+      selectedDay: selectedDay,
+      selectedMonth: selectedMonth,
+      selectedYear: selectedYear
+    });
+  };
+
   return (
     <ScrollView>
       <Calendar
@@ -46,7 +54,8 @@ export function Month({ navigation }) {
       <EventList
         selectedDay={selectedDay}
         selectedMonth={selectedMonth}
-        selectedYear={selectedYear} />
+        selectedYear={selectedYear}
+        onAddEventPress={onAddEventPress} />
     </ScrollView>
   );
 }

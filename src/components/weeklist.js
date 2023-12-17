@@ -77,11 +77,7 @@ const getDayName = (dateString) => {
     return daysOfWeek[dayIndex];
 };
 
-const addEvent = (dateString) => {
-    // Dodać implementacje
-}
-
-const WeekList = () => {
+const WeekList = ({onAddEventPress}) => {
     const monthList = getCurrentMonthList();
 
     return (
@@ -113,7 +109,9 @@ const WeekList = () => {
                         )}
                         <TouchableOpacity 
                             style={styles.plusButton}
-                            onPress={() => addEvent()}>
+                            onPress={() => {
+                                const [day, month, year] = item.date.split('/').map(Number);
+                                onAddEventPress(day, month, year)}}>
                             <Image
                                 source={require('../img/Plus.png')}
                                 style={styles.plusIMG}

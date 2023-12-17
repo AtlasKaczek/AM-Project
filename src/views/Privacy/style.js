@@ -1,6 +1,10 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
   blueBar: {
     backgroundColor: '#1554F6',
     padding: 20,
@@ -25,5 +29,24 @@ export const styles = StyleSheet.create({
   privacyText: {
     fontSize: 16,
     lineHeight: 24,
+    color: '#333', // Dodany kolor tekstu
+    textAlign: 'justify', // Wyrównanie tekstu
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10, // Dodaj margines na górze
+    marginBottom: 5, // Dodaj margines na dole
+  },
+
+  privacyText: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 10, // Dodaj margines na dole
+  },
+
+  linkText: {
+    color: '#1554F6',
+    textDecorationLine: 'underline',
   },
 });

@@ -8,5 +8,6 @@ import { Privacy } from "./Privacy";
 import { Splash } from "./Splash";
 import { Profile } from "./Profile";
 import { Friends } from "./Friends";
+import { AddFriends } from "./AddFriends";
 
-export { Login, Register, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile, Friends, Splash }
+export { Login, Register, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile, Friends, Splash, AddFriends }

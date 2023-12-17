@@ -34,7 +34,7 @@ export function Friends() {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const handleAddFriend = () => {
-    // Dodaś obsługę dodawania znajomego
+    navigation.navigate('AddFriends');
   };
 
   const handleSearch = (text) => {

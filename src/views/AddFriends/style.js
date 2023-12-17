@@ -98,4 +98,14 @@ export const styles = StyleSheet.create({
   removeButtonText: {
     color: 'white',
   },
+  addButtonText: {
+    color: 'white',
+  },
+  addButton: {
+    marginTop: 20,
+    backgroundColor: 'green',
+    borderRadius: 5,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
 });

@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     prevNextButton: {
         padding: 10,
         borderRadius: 5,
-        backgroundColor: '#66bfbf',
+        backgroundColor: 'grey',
     },
     prevNextButtonText: {
         color: 'white',

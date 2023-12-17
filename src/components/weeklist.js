@@ -51,8 +51,7 @@ const getCurrentMonthList = () => {
     const currentWeekDay = new Date().getDay();
     const currentMonth = new Date().getMonth() + 1;
     const currentYear = new Date().getFullYear();
-    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-    const startOfWeek = currentDay - currentWeekDay + (currentDay === 0 ? -6 : 1);;
+    const startOfWeek = currentDay - (currentWeekDay === 0 ? 7 : 0) + (currentDay === 0 ? -5 : 1);
 
     const monthList = [];
     for (let day = startOfWeek; day <= startOfWeek+6; day++) {

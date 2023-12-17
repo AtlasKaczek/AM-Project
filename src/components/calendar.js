@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, onCurrentMonthChange, onCurrentYearChange, onSelectedDayChange, onSelectedMonthChange, onSelectedYearChange}) => {
+const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, selectedYear, onCurrentMonthChange, onCurrentYearChange, onSelectedDayChange, onSelectedMonthChange, onSelectedYearChange}) => {
     const currentDay = new Date().getDate();
 
     const daysInMonth = (month, year) => {
@@ -79,9 +79,9 @@ const Calendar = ({currentMonth, currentYear, selectedDay, selectedMonth, onCurr
                             key={index}
                             style={
                                 day !== null
-                                    ? day === selectedDay && currentMonth === selectedMonth
+                                    ? day === selectedDay && currentMonth === selectedMonth && currentYear === selectedYear
                                         ? styles.selectedDayItem
-                                        : currentDay === day && currentMonth === new Date().getMonth()+1
+                                        : currentDay === day && currentMonth === new Date().getMonth()+1 && currentYear === new Date().getFullYear()
                                             ? styles.currentDayItem
                                             : styles.dayItem
                                     : styles.emptyDayItem

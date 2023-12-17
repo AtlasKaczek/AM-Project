@@ -36,17 +36,27 @@ export const styles = StyleSheet.create({
   usernameContainer: {
     marginVertical: 20,
   },
+  inputContainer: {
+    marginVertical: 10,
+  },
   label: {
     fontSize: 18,
     marginBottom: 5,
+    alignSelf: 'center',
   },
   input: {
+    width: "80%",
+    height: 50,
+    borderColor: "gray",
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    marginBottom: 10,
     padding: 10,
-    fontSize: 16,
-    width: '100%',
+    alignSelf: 'center',
+  },
+  picker: {
+    height: 50,
+    width: "80%",
+    alignSelf: 'center',
   },
   saveButton: {
     backgroundColor: '#1554F6',
@@ -60,5 +70,33 @@ export const styles = StyleSheet.create({
   saveButtonText: {
     color: 'white',
     fontSize: 18,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  interestModalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+    width: '80%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  closeIcon: {
+    width: 20,
+    height: 20,
+    tintColor: 'red',
+  },
+  interestItem: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
 });

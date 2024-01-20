@@ -1,69 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { auth, database } from "../database/firebaseConfig";
+import { ref, get, onValue } from 'firebase/database';
 
-const list = [
-    {
-        date: '20/12/2023',
-        events: [
-            {
-                name: 'Obiad',
-                desc: 'Opis',
-                time_start: '15:00',
-                time_end: '15:30',
-            },
-            {
-                name: 'Spotkanie',
-                desc: 'Opis spotkania',
-                time_start: '09:30',
-                time_end: '10:00',
-            },
-            {
-                name: 'Spacer',
-                desc: 'Opis spaceru',
-                time_start: '18:00',
-                time_end: '19:00',
-            },
-        ],
-    },
-    {
-        date: '22/12/2023',
-        events: [
-            {
-                name: 'Obiad',
-                desc: 'Opis',
-                time_start: '15:00',
-                time_end: '15:30',
-            },
-        ],
-    },
-    {
-        date: '24/12/2023',
-        events: [],
-    },
-];
 
-const getDaysInMonth = (month, year) => {
-    return new Date(year, month, 0).getDate();
-};
+const getEventList = async () => {
+    const user = auth.currentUser;
 
-const getCurrentMonthList = () => {
-    const currentDay = new Date().getDate();
-    const currentWeekDay = new Date().getDay();
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
-    const startOfWeek = currentDay - (currentWeekDay === 0 ? 7 : 0) + (currentDay === 0 ? -5 : 1);
+    if (user) {
+        try {
+            const userEventListRef = ref(database, `users/${user.uid}/eventList`);
+            const snapshot = await get(userEventListRef);
+            const eventListData = snapshot.val();
 
-    const monthList = [];
-    for (let day = startOfWeek; day <= startOfWeek+6; day++) {
-        const dateString = `${day >= 10 ? day : `0${day}`}/${currentMonth}/${currentYear}`;
-        const eventsForDate = list.find((item) => item.date === dateString)?.events || [];
-        monthList.push({
-            date: dateString,
-            events: eventsForDate,
-        });
+            if (eventListData) {
+                const list = Object.entries(eventListData).map(([date, events]) => {
+                    return {
+                        date,
+                        events: Object.entries(events).map(([eventId, eventData]) => {
+                            return {
+                                eventId,
+                                ...eventData,
+                            };
+                        }),
+                    };
+                });
+                return list;
+            } else {
+                console.log("No events found for the user.");
+                return [];
+            }
+        } catch (error) {
+            console.error("Error getting event list:", error.message);
+            return [];
+        }
+    } else {
+        console.error("User not authenticated.");
+        return [];
     }
-
-    return monthList;
 };
 
 const getDayName = (dateString) => {
@@ -78,7 +52,69 @@ const getDayName = (dateString) => {
 };
 
 const WeekList = ({onAddEventPress}) => {
-    const monthList = getCurrentMonthList();
+    const [monthList, setMonthList] = useState([]);
+    const [list, setList] = useState([]);
+
+    const getCurrentMonthList = (updatedList) => {
+        const currentDay = new Date().getDate();
+        const currentWeekDay = new Date().getDay();
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        const startOfWeek = currentDay - (currentWeekDay === 0 ? 7 : 0) + (currentDay === 0 ? -5 : 1);
+    
+        const updatedMonthList = [];
+        for (let day = startOfWeek; day <= startOfWeek + 6; day++) {
+            const dateString = `${day >= 10 ? day : `0${day}`}-${currentMonth}-${currentYear}`;
+            const eventsForDate = updatedList.find((item) => item.date === dateString)?.events || [];
+            updatedMonthList.push({
+                date: dateString,
+                events: eventsForDate,
+            });
+        }
+    
+        setMonthList(updatedMonthList);
+    };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const updatedList = await getEventList();
+        setList(updatedList);
+
+        
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      }
+    };
+
+    const user = auth.currentUser;
+    if (user) {
+      const userEventListRef = ref(database, `users/${user.uid}/eventList`);
+      
+      // Use onValue to listen for changes in the data
+      onValue(userEventListRef, (snapshot) => {
+        // The snapshot.val() contains the updated data
+        const updatedList = snapshot.val()
+          ? Object.entries(snapshot.val()).map(([date, events]) => {
+              return {
+                date,
+                events: Object.entries(events).map(([eventId, eventData]) => {
+                  return {
+                    eventId,
+                    ...eventData,
+                  };
+                }),
+              };
+            })
+          : [];
+    
+        setList(updatedList);
+        getCurrentMonthList(updatedList);
+    });
+    }
+    
+    fetchData();
+  }, []);
 
     return (
         <FlatList
@@ -110,7 +146,7 @@ const WeekList = ({onAddEventPress}) => {
                         <TouchableOpacity 
                             style={styles.plusButton}
                             onPress={() => {
-                                const [day, month, year] = item.date.split('/').map(Number);
+                                const [day, month, year] = item.date.split('-').map(Number);
                                 onAddEventPress(day, month, year)}}>
                             <Image
                                 source={require('../img/Plus.png')}

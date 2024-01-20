@@ -12,7 +12,7 @@ const DatePicker = ({ selectedDay, selectedMonth, selectedYear, onSelectedDayCha
     const getCurrentMonthList = () => {
         const monthList = [];
         for (let day = 1; day <= getDaysInMonth(currentMonth, currentYear); day++) {
-            const dateString = `${day >= 10 ? day : `0${day}`}/${currentMonth}/${currentYear}`;
+            const dateString = `${day >= 10 ? day : `0${day}`}-${currentMonth}-${currentYear}`;
             monthList.push({
                 date: dateString,
             });
@@ -66,7 +66,7 @@ const DatePicker = ({ selectedDay, selectedMonth, selectedYear, onSelectedDayCha
                 keyExtractor={(item) => item.date}
                 renderItem={({ item, index }) => (
                     <View style={styles.dateContainer}>
-                        <View style={item.date !== `${selectedDay >= 10 ? selectedDay : `0${selectedDay}`}/${selectedMonth}/${selectedYear}` ?
+                        <View style={item.date !== `${selectedDay >= 10 ? selectedDay : `0${selectedDay}`}-${selectedMonth}-${selectedYear}` ?
                                     styles.eventsContainer :
                                     styles.selectedEventItem}>
                             <TouchableOpacity

@@ -4,42 +4,42 @@ import DatePicker from "../../components/datepicker";
 import { useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import HourPicker from "../../components/hourpicker";
+import { auth, database } from "../../database/firebaseConfig";
+import { ref, push } from "firebase/database";
 
 export function AddEvent({ navigation }) {
     const route = useRoute()
     const [selectedDay, setSelectedDay] = useState(route.params?.selectedDay);
     const [selectedMonth, setSelectedMonth] = useState(route.params?.selectedMonth);
     const [selectedYear, setSelectedYeat] = useState(route.params?.selectedYear);
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
     const [category, setCategory] = useState('Inne');
     const [note, setNote] = useState('');
+    const [eventName, setEventName] = useState('Wydarzenie');
 
     const onSelectedDayChange = (data) => {
         setSelectedDay(data);
-        console.log(data);
     }
 
     const onSelectedMonthChange = (data) => {
         setSelectedMonth(data);
-        console.log(data);
     }
 
     const onSelectedYearChange = (data) => {
         setSelectedYeat(data);
-        console.log(data);
     }
 
     const onStartTimeChange = (data) => {
         setStartTime(data);
-        console.log(data);
     }
 
     const onEndTimeChange = (data) => {
         setEndTime(data);
-        console.log(data);
     }
-
+    const onEventNameChange = (data) => {
+        setEventName(data);
+    }
     const onNoteChange = (data) => {
         setNote(data);
     }
@@ -66,8 +66,30 @@ export function AddEvent({ navigation }) {
         },
     ];
 
-    const prepareEvent = () => {
-        // TODO: Add implementation
+    const prepareEvent = async () => {
+        const eventDate = `${selectedDay}-${selectedMonth}-${selectedYear}`;
+        const newEvent = {
+            name: eventName,
+            desc: note,
+            category: category,
+            localization: "",
+            friends: [],
+            time_start: startTime,
+            time_end: endTime,
+        };
+
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                const userEventListRef = ref(database,`users/${user.uid}/eventList/${eventDate}`);
+          
+                const newEventRef = await push(userEventListRef,newEvent);
+          
+                console.log("Event added:", newEventRef.key);
+              } catch (error) {
+                console.error("Error adding event:", error.message);
+              }
+        }
     }
 
     const addFriendToEvent = () => {
@@ -84,7 +106,7 @@ export function AddEvent({ navigation }) {
                     style={[styles.categoryItem, index === 0 && row.length === 1 ? styles.singleCategoryItem : null]}
                     onPress={() => onCategoryChange(item.name)}
                 >
-                    <View style={[styles.categoryCircle, { backgroundColor: item.color}]} />
+                    <View style={[styles.categoryCircle, { backgroundColor: item.color }]} />
                     <Text style={styles.categoryText}>{item.name}</Text>
                 </TouchableOpacity>
             ));
@@ -102,7 +124,7 @@ export function AddEvent({ navigation }) {
     };
 
     return (
-        <View style={styles.Container}>
+        <ScrollView style={styles.Container}>
             <View style={styles.blueBar}></View>
 
             <View style={styles.header}>
@@ -152,6 +174,14 @@ export function AddEvent({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
+            <Text style={styles.title1}>Dodaj nazwę wydarzenia</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Nazwa wydarzenia"
+                maxLength={50}
+                value={eventName}
+                onChangeText={onEventNameChange}
+            />
             <Text style={styles.title1}>Dodaj notatkę</Text>
             <TextInput
                 style={styles.input}
@@ -163,6 +193,6 @@ export function AddEvent({ navigation }) {
             <TouchableOpacity style={styles.addBtn} onPress={prepareEvent}>
                 <Text style={styles.addEventText}>Dodaj</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }

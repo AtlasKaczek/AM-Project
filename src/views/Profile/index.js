@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { styles } from "./style";
-
-const iconColor = '#1554F6';
+import { auth } from "../../database/firebaseConfig";
+import { signOut, getAuth } from "firebase/auth";
 
 export function Profile({ navigation }) {
+  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      setUserName(user.displayName);
+      setEmail(user.email);
+    }
+  }, []);
+
   const handleLogout = () => {
-    // Obsługa wylogowania
+    signOut(auth)
+      .then(() => {
+        navigation.navigate('Login');
+      })
+      .catch(error => {
+        // bledy
+      });
   };
 
   const handleNavigateToSettings = () => {
@@ -43,8 +60,8 @@ export function Profile({ navigation }) {
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.username}>Nazwa Użytkownika</Text>
-          <Text style={styles.email}>email@example.com</Text>
+          <Text style={styles.username}>{userName}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
 

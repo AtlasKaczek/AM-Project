@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from "react-native";
 import { auth, database } from "../../database/firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, set } from "firebase/database"
 
 export function Register({ navigation }) {
@@ -32,6 +32,10 @@ export function Register({ navigation }) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: username,
+      });
 
       await set(ref(database ,'users/' + user.uid), {
         username,

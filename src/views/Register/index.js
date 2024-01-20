@@ -4,20 +4,46 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  CheckBox,
+  TouchableOpacity
 } from "react-native";
+import { auth, database } from "../../database/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, set } from "firebase/database"
 
 export function Register({ navigation }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [password1, setPassowrd1] = useState("");
+  const [password1, setPassword1] = useState("");
   const [consent, setConsent] = useState(false);
+  const [registrationError, setRegistrationError] = useState(null);
 
-  const handleLogin = () => {
-    console.log("Zarejestrowano", username, email, password, password1);
+  const handleLogin = async () => {
+    if (!username || !email || !password || !password1 || !consent) {
+      setRegistrationError("Wszystkie pola muszą być wypełnione!");
+      return;
+    }
+
+    if (password !== password1) {
+      setRegistrationError("Hasła muszą być takie same!");
+      return;
+    }
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await set(ref(database ,'users/' + user.uid), {
+        username,
+        email,
+      });
+
+      console.log("User created with username:", username);
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error(error);
+      setRegistrationError(error.message);
+    }
   };
 
   const toggleConstent = () => {
@@ -39,7 +65,6 @@ export function Register({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Adres e-mail"
-        secureTextEntry
         onChangeText={(text) => setEmail(text)}
         value={email}
       />
@@ -69,6 +94,9 @@ export function Register({ navigation }) {
           Wyrażam zgodę na warunki korzystania z aplikacji
         </Text>
       </TouchableOpacity>
+      {registrationError && (
+        <Text style={styles.errorText}>{registrationError}</Text>
+      )}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Zarejestruj się</Text>
       </TouchableOpacity>

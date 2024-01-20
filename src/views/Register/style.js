@@ -64,4 +64,8 @@ export const styles = StyleSheet.create({
   checkboxLabel: {
     fontSize: 16,
   },
+  errorText: {
+    color: "red",
+    marginBottom: 20,
+  },
 });

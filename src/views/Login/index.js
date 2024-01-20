@@ -1,16 +1,35 @@
 import {styles} from "./style";
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, CheckBox } from 'react-native';
+import { auth, database } from "../../database/firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { ref, get } from "firebase/database"  
+  // dodanie contextu
+
 
 export function Login({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [loginError, setLoginError] = useState(null);
 
-
-  const handleLogin = () => { 
+  const handleLogin = async () => { 
     console.log('Próba logowania:', username, password);
-    navigation.navigate('Profile');
+    if (!username || !password ) {
+      setLoginError("Wszystkie pola muszą być wypełnione!");
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+
+      // dodanie contextu
+
+      navigation.navigate('Profile');
+    } catch (error) {
+      console.error(error);
+      setLoginError(error.message);
+    }
   };
 
   const navigateToRegister = () => {
@@ -45,6 +64,9 @@ export function Login({ navigation }) {
         </View>
         <Text style={styles.checkboxLabel}>Zapamiętaj mnie</Text>
       </TouchableOpacity>
+      {loginError && (
+        <Text style={styles.errorText}>{loginError}</Text>
+      )}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Zaloguj się</Text>
       </TouchableOpacity>

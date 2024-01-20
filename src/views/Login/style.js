@@ -80,4 +80,8 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     paddingBottom: 50,
   },
+  errorText: {
+    color: "red",
+    marginBottom: 20,
+  },
 });

@@ -6,7 +6,7 @@ const EventList = ({ selectedDay, selectedMonth, selectedYear, onAddEventPress }
     
     const list = [
         {
-            date: `12/12/2023`,
+            date: `20/12/2023`,
             events: [
                 {
                     name: 'Obiad',
@@ -29,7 +29,7 @@ const EventList = ({ selectedDay, selectedMonth, selectedYear, onAddEventPress }
             ],
         },
         {
-            date: `15/12/2023`,
+            date: `22/12/2023`,
             events: [
                 {
                     name: 'Obiad',

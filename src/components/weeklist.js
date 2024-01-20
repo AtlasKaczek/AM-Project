@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react
 
 const list = [
     {
-        date: '12/12/2023',
+        date: '20/12/2023',
         events: [
             {
                 name: 'Obiad',
@@ -26,7 +26,7 @@ const list = [
         ],
     },
     {
-        date: '15/12/2023',
+        date: '22/12/2023',
         events: [
             {
                 name: 'Obiad',
@@ -37,7 +37,7 @@ const list = [
         ],
     },
     {
-        date: '16/12/2023',
+        date: '24/12/2023',
         events: [],
     },
 ];

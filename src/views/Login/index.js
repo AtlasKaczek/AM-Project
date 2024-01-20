@@ -3,9 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, CheckBox } from 'react-native';
 import { auth, database } from "../../database/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { ref, get } from "firebase/database"  
-  // dodanie contextu
-
+import { ref, get } from "firebase/database";
 
 export function Login({ navigation }) {
   const [username, setUsername] = useState('');

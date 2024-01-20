@@ -1,81 +1,96 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { auth, database } from "../database/firebaseConfig";
+import { ref, get } from 'firebase/database';
+
+const getEventList = async () => {
+    const user = auth.currentUser;
+
+    if (user) {
+        try {
+            const userEventListRef = ref(database, `users/${user.uid}/eventList`);
+            const snapshot = await get(userEventListRef);
+            const eventListData = snapshot.val();
+
+            if (eventListData) {
+                const list = Object.entries(eventListData).map(([date, events]) => {
+                    return {
+                        date,
+                        events: Object.entries(events).map(([eventId, eventData]) => {
+                            return {
+                                eventId,
+                                ...eventData,
+                            };
+                        }),
+                    };
+                });
+
+                return list;
+            } else {
+                console.log("No events found for the user.");
+                return [];
+            }
+        } catch (error) {
+            console.error("Error getting event list:", error.message);
+            return [];
+        }
+    } else {
+        console.error("User not authenticated.");
+        return [];
+    }
+};
 
 const EventList = ({ selectedDay, selectedMonth, selectedYear, onAddEventPress }) => {
     const [DayEvents, setDayEvents] = useState([]);
-    
-    const list = [
-        {
-            date: `20/12/2023`,
-            events: [
-                {
-                    name: 'Obiad',
-                    desc: 'Opis',
-                    time_start: '15:00',
-                    time_end: '15:30',
-                },
-                {
-                    name: 'Spotkanie',
-                    desc: 'Opis spotkania',
-                    time_start: '09:30',
-                    time_end: '10:00',
-                },
-                {
-                    name: 'Spacer',
-                    desc: 'Opis spaceru',
-                    time_start: '18:00',
-                    time_end: '19:00',
-                },
-            ],
-        },
-        {
-            date: `22/12/2023`,
-            events: [
-                {
-                    name: 'Obiad',
-                    desc: 'Opis',
-                    time_start: '15:00',
-                    time_end: '15:30',
-                },
-            ],
-        },
-    ];
+
+    const fetchData = async () => {
+        const list = await getEventList();
+
+        const currentDay = new Date().getDate();
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        const dateString = `${currentDay >= 10 ? currentDay : `0${currentDay}`}-${currentMonth}-${currentYear}`;
+        const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
+        if (selectedDay === null && selectedMonth === null) {
+            const DayEvents = list.find((item) => item.date === dateString);
+            if (DayEvents) {
+                setDayEvents(
+                    DayEvents.events.sort(
+                        (eventA, eventB) =>
+                            new Date(2023, 1, 1, eventA.time_start.slice(0, 2), eventA.time_start.slice(-2)) -
+                            new Date(2023, 1, 1, eventB.time_start.slice(0, 2), eventB.time_start.slice(-2))
+                    )
+                );
+            }
+        } else {
+            const selectedDateEvents = list.find(
+                (item) =>
+                    item.date ===
+                    `${selectedDate.getDate()}-${selectedDate.getMonth() + 1}-${selectedDate.getFullYear()}`
+            );
+            if (selectedDateEvents) {
+                setDayEvents(
+                    selectedDateEvents.events.sort(
+                        (eventA, eventB) =>
+                            new Date(2023, 1, 1, eventA.time_start.slice(0, 2), eventA.time_start.slice(-2)) -
+                            new Date(2023, 1, 1, eventB.time_start.slice(0, 2), eventB.time_start.slice(-2))
+                    )
+                );
+            } else {
+                setDayEvents([]);
+            }
+        }
+    };
+
 
     useEffect(() => {
-        const getDayEvents = () => {
-            const currentDate = new Date().toLocaleDateString('en-GB');
-            const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
-            
-            if (selectedDay === null && selectedMonth === null) {
-                const DayEvents = list.find((item) => item.date === currentDate);
-                if (DayEvents) {
-                  return DayEvents.events.sort(
-                    (eventA, eventB) =>
-                      new Date(2023, 1, 1, eventA.time_start.slice(0, 2), eventA.time_start.slice(-2)) -
-                      new Date(2023, 1, 1, eventB.time_start.slice(0, 2), eventB.time_start.slice(-2))
-                  );
-                }
-              } else {
-                const selectedDateEvents = list.find(
-                  (item) =>
-                    item.date ===
-                    `${selectedDate.getDate()}/${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
-                );
-                if (selectedDateEvents) {
-                  return selectedDateEvents.events.sort(
-                    (eventA, eventB) =>
-                      new Date(2023, 1, 1, eventA.time_start.slice(0, 2), eventA.time_start.slice(-2)) -
-                      new Date(2023, 1, 1, eventB.time_start.slice(0, 2), eventB.time_start.slice(-2))
-                  );
-                }
-              }
+        fetchData();
+      }, []);
 
-            return [];
-        };
-
-        const updatedEvents = getDayEvents();
-        setDayEvents(updatedEvents);
+    useEffect(() => {
+        fetchData();
     }, [selectedDay, selectedMonth, selectedYear]);
+
 
     return (
         <View style={styles.container}>

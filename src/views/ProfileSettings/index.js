@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Image, TextInpu
 import { styles } from "./style";
 import { auth, database, storage } from "../../database/firebaseConfig"; // Zaktualizowano importy
 import { set, ref, get } from 'firebase/database';
+import { updateProfile } from "firebase/auth"
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Importujemy funkcje z Firebase Storage
@@ -34,10 +35,10 @@ export function ProfileSettings({ navigation }) {
         }
         
         setUsername(userData ? userData.username : "");
-        setFullName(userData ? userData.fullName : "");
-        setCountry(userData ? userData.country : "Poland");
-        setPhone(userData ? userData.phone : "");
-        setSelectedInterests(userData ? userData.selectedInterests : []);
+        setFullName(userData.fullName ? userData.fullName : "");
+        setCountry(userData.country ? userData.country : "Poland");
+        setPhone(userData.phone ? userData.phone : "");
+        setSelectedInterests(userData.selectedInterests ? userData.selectedInterests : []);
       })();
     }
 
@@ -89,7 +90,10 @@ export function ProfileSettings({ navigation }) {
             async () => {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               console.log("Pomyślnie przesłano i pobrano URL:", downloadURL);
-
+              
+              updateProfile(auth.currentUser, {
+                displayName: username, photoURL: downloadURL
+              })
               const updatedUserData = {
                 ...userData,
                 photoURL: downloadURL, // Aktualizujemy URL zdjęcia

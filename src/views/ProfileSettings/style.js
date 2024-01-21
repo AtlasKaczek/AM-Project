@@ -99,4 +99,25 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
+  imagePickerModalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+    width: '80%',
+    alignItems: 'center',
+  },
+  imagePickerButton: {
+    backgroundColor: '#1554F6',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  imagePickerButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
 });
+

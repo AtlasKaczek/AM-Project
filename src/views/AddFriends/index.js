@@ -1,32 +1,90 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, Button } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { styles } from "./style";
-
-  const initialFriendsData = [
-    { id: '2', username: 'JaneSmith', image: require('../../img/Profil.png'), country: 'Canada', phone: '987-654-321', interests: ['Podróże', 'Książki'], fullName: 'Jane Smith' },
-    { id: '3', username: 'AliceJohnson', image: require('../../img/Profil.png'), country: 'UK', phone: '555-123-456', interests: ['Film', 'Gotowanie'], fullName: 'Alice Johnson' },
-    { id: '4', username: 'BobWilliams', image: require('../../img/Profil.png'), country: 'Australia', phone: '123-789-456', interests: ['Gry', 'Sztuka'], fullName: 'Bob Williams' },
-    { id: '5', username: 'CharlieDavis', image: require('../../img/Profil.png'), country: 'Germany', phone: '987-321-654', interests: ['Podróże', 'Sport'], fullName: 'Charlie Davis' },
-    { id: '6', username: 'DianaMoore', image: require('../../img/Profil.png'), country: 'France', phone: '555-456-789', interests: ['Muzyka', 'Moda'], fullName: 'Diana Moore' },
-    { id: '7', username: 'EthanTaylor', image: require('../../img/Profil.png'), country: 'Japan', phone: '123-456-789', interests: ['Książki', 'Film'], fullName: 'Ethan Taylor' },
-    { id: '8', username: 'FionaClark', image: require('../../img/Profil.png'), country: 'Italy', phone: '987-654-321', interests: ['Gotowanie', 'Sztuka'], fullName: 'Fiona Clark' },
-    { id: '9', username: 'GeorgeSmith', image: require('../../img/Profil.png'), country: 'Brazil', phone: '555-123-456', interests: ['Podróże', 'Gry'], fullName: 'George Smith' },
-    { id: '10', username: 'HannahBrown', image: require('../../img/Profil.png'), country: 'Russia', phone: '123-789-456', interests: ['Sport', 'Film'], fullName: 'Hannah Brown' },
-    { id: '11', username: 'IsaacWilson', image: require('../../img/Profil.png'), country: 'India', phone: '987-321-654', interests: ['Moda', 'Muzyka'], fullName: 'Isaac Wilson' },
-    { id: '12', username: 'JessicaHall', image: require('../../img/Profil.png'), country: 'China', phone: '555-456-789', interests: ['Sztuka', 'Podróże'], fullName: 'Jessica Hall' },
-    { id: '13', username: 'KevinMiller', image: require('../../img/Profil.png'), country: 'South Africa', phone: '123-456-789', interests: ['Gry', 'Gotowanie'], fullName: 'Kevin Miller' },
-  ];
+import { auth, database, storage } from "../../database/firebaseConfig";
+import { set, ref, get, push } from 'firebase/database';
   
 export function AddFriends() {
   const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [friendsData, setFriendsData] = useState(initialFriendsData);
+  const [friendsData, setFriendsData] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const handleAddFriend = () => {
-    // Dodać obsługę dodawania znajomego
+  const fetchData = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const userDatabase = ref(database, `users`);
+        const snapshot = await get(userDatabase);
+        const usersData = snapshot.val();
+
+        if (usersData) {
+          const userIds = Object.keys(usersData);
+
+          const userDataPromises = userIds.map(async (userId) => {
+            const userRef = ref(database, `users/${userId}`);
+            const userSnapshot = await get(userRef);
+            const userData = userSnapshot.val();
+  
+            if (userData) {
+              return {
+                id: userId,
+                username: userData.username,
+                image: userData.photoURL ? { uri: userData.photoURL } : require('../../img/Profil.png'),
+                country: userData.country,
+                phone: userData.phone,
+                interests: userData.selectedInterests,
+                fullName: userData.fullName,
+              };
+            } else {
+              console.log(`No user data found for user with ID: ${userId}`);
+              return null;
+            }
+          });
+  
+          const userDataArray = await Promise.all(userDataPromises);
+  
+          const userList = userDataArray.filter((userData) => userData !== null);
+          return userList;
+        } else {
+          console.log("No info found for the user.");
+          return [];
+
+        }
+      } catch (error) {
+        console.error("Error getting user list:", error.message);
+        return [];
+      }
+    } else {
+      console.error("User not authenticated.");
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const data = await fetchData();
+      setFriendsData(data);
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleAddFriend = async (friendId) => {
+    console.log(friendId);
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const userFriendListRef = ref(database, `users/${user.uid}/friendlist`);
+        const newfriendRef = await push(userFriendListRef, friendId);
+        console.log("Dodano znajomego: ", friendId);
+
+      } catch(error){
+        console.error("error: ", error);
+      }
+    }
   };
 
   const handleSearch = (text) => {
@@ -121,9 +179,9 @@ export function AddFriends() {
               <Text style={{ fontWeight: 'bold' }}>Telefon:</Text> {selectedFriend?.phone}
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Zainteresowania:</Text> {selectedFriend?.interests.join(', ')}
+              <Text style={{ fontWeight: 'bold' }}>Zainteresowania:</Text> {selectedFriend?.interests ? selectedFriend?.interests.join(', '): ""}
             </Text>
-            <TouchableOpacity style={styles.addButton} onPress={handleAddFriend}>
+            <TouchableOpacity style={styles.addButton} onPress={()=>handleAddFriend(selectedFriend?.id)}>
               <Text style={styles.addButtonText}>Dodaj znajomego</Text>
             </TouchableOpacity>
           </View>

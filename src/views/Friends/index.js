@@ -1,37 +1,76 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, Button } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { styles } from "./style";
-
-const initialFriendsData = [
-  { id: '1', username: 'JohnDoe', image: require('../../img/Profil.png'), country: 'USA', phone: '123-456-789', interests: ['Sport', 'Muzyka'], fullName: 'John Doe' },
-  { id: '2', username: 'JaneSmith', image: require('../../img/Profil.png'), country: 'Canada', phone: '987-654-321', interests: ['Podróże', 'Książki'], fullName: 'Jane Smith' },
-  { id: '3', username: 'AliceJohnson', image: require('../../img/Profil.png'), country: 'UK', phone: '555-123-456', interests: ['Film', 'Gotowanie'], fullName: 'Alice Johnson' },
-  { id: '4', username: 'BobWilliams', image: require('../../img/Profil.png'), country: 'Australia', phone: '123-789-456', interests: ['Gry', 'Sztuka'], fullName: 'Bob Williams' },
-  { id: '5', username: 'CharlieDavis', image: require('../../img/Profil.png'), country: 'Germany', phone: '987-321-654', interests: ['Podróże', 'Sport'], fullName: 'Charlie Davis' },
-  { id: '6', username: 'DianaMoore', image: require('../../img/Profil.png'), country: 'France', phone: '555-456-789', interests: ['Muzyka', 'Moda'], fullName: 'Diana Moore' },
-  { id: '7', username: 'EthanTaylor', image: require('../../img/Profil.png'), country: 'Japan', phone: '123-456-789', interests: ['Książki', 'Film'], fullName: 'Ethan Taylor' },
-  { id: '8', username: 'FionaClark', image: require('../../img/Profil.png'), country: 'Italy', phone: '987-654-321', interests: ['Gotowanie', 'Sztuka'], fullName: 'Fiona Clark' },
-  { id: '9', username: 'GeorgeSmith', image: require('../../img/Profil.png'), country: 'Brazil', phone: '555-123-456', interests: ['Podróże', 'Gry'], fullName: 'George Smith' },
-  { id: '10', username: 'HannahBrown', image: require('../../img/Profil.png'), country: 'Russia', phone: '123-789-456', interests: ['Sport', 'Film'], fullName: 'Hannah Brown' },
-  { id: '11', username: 'IsaacWilson', image: require('../../img/Profil.png'), country: 'India', phone: '987-321-654', interests: ['Moda', 'Muzyka'], fullName: 'Isaac Wilson' },
-  { id: '12', username: 'JessicaHall', image: require('../../img/Profil.png'), country: 'China', phone: '555-456-789', interests: ['Sztuka', 'Podróże'], fullName: 'Jessica Hall' },
-  { id: '13', username: 'KevinMiller', image: require('../../img/Profil.png'), country: 'South Africa', phone: '123-456-789', interests: ['Gry', 'Gotowanie'], fullName: 'Kevin Miller' },
-  { id: '14', username: 'LauraWhite', image: require('../../img/Profil.png'), country: 'Mexico', phone: '987-654-321', interests: ['Film', 'Książki'], fullName: 'Laura White' },
-  { id: '15', username: 'MorganLee', image: require('../../img/Profil.png'), country: 'Argentina', phone: '555-123-456', interests: ['Muzyka', 'Moda'], fullName: 'Morgan Lee' },
-  { id: '16', username: 'NathanMoore', image: require('../../img/Profil.png'), country: 'Canada', phone: '123-789-456', interests: ['Podróże', 'Gry'], fullName: 'Nathan Moore' },
-  { id: '17', username: 'OliviaMartin', image: require('../../img/Profil.png'), country: 'Australia', phone: '987-321-654', interests: ['Sport', 'Film'], fullName: 'Olivia Martin' },
-  { id: '18', username: 'PaulJones', image: require('../../img/Profil.png'), country: 'Germany', phone: '555-456-789', interests: ['Muzyka', 'Moda'], fullName: 'Paul Jones' },
-  { id: '19', username: 'QuinnDavis', image: require('../../img/Profil.png'), country: 'USA', phone: '123-456-789', interests: ['Film', 'Gry'], fullName: 'Quinn Davis' },
-  { id: '20', username: 'RachelSmith', image: require('../../img/Profil.png'), country: 'UK', phone: '987-654-321', interests: ['Książki', 'Sztuka'], fullName: 'Rachel Smith' },
-];
+import { auth, database, storage } from "../../database/firebaseConfig";
+import { set, ref, get } from 'firebase/database';
 
 export function Friends() {
   const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [friendsData, setFriendsData] = useState(initialFriendsData);
+  const [friendsData, setFriendsData] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const fetchData = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const userFriendListRef = ref(database, `users/${user.uid}/friendlist/`);
+        const snapshot = await get(userFriendListRef);
+        const friendListData = snapshot.val();
+
+        if (friendListData) {
+          const friendIds = Object.values(friendListData);
+
+          const friendDataPromises = friendIds.map(async (friendId) => {
+            const userRef = ref(database, `users/${friendId}`);
+            const userSnapshot = await get(userRef);
+            const userData = userSnapshot.val();
+  
+            if (userData) {
+              return {
+                id: friendId,
+                username: userData.username,
+                image: userData.photoURL ? { uri: userData.photoURL } : require('../../img/Profil.png'),
+                country: userData.country,
+                phone: userData.phone,
+                interests: userData.selectedInterests,
+                fullName: userData.fullName,
+              };
+            } else {
+              console.log(`No user data found for friend with ID: ${friendId}`);
+              return null;
+            }
+          });
+  
+          const friendDataArray = await Promise.all(friendDataPromises);
+  
+          const friendList = friendDataArray.filter((friendData) => friendData !== null);
+          return friendList;
+        } else {
+          console.log("No friends found for the user.");
+          return [];
+
+        }
+      } catch (error) {
+        console.error("Error getting event list:", error.message);
+        return [];
+      }
+    } else {
+      console.error("User not authenticated.");
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      const data = await fetchData();
+      setFriendsData(data);
+    };
+
+    fetchFriends();
+  }, []);
 
   const handleAddFriend = () => {
     navigation.navigate('AddFriends');

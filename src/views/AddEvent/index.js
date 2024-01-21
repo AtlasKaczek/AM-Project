@@ -90,10 +90,15 @@ export function AddEvent({ navigation }) {
                 console.error("Error adding event:", error.message);
               }
         }
+        navigation.goBack();
     }
 
     const addFriendToEvent = () => {
         // TODO: Add implementation
+    }
+
+    const addLocationToEvent = () => {
+        navigation.navigate("MapScreen");
     }
 
     const renderCategoryRows = () => {
@@ -167,7 +172,7 @@ export function AddEvent({ navigation }) {
                 <Text style={styles.title2}>Dodaj lokalizację wydarzenia</Text>
                 <TouchableOpacity
                     style={styles.plusButton}
-                    onPress={() => addFriendToEvent()}>
+                    onPress={() => addLocationToEvent()}>
                     <Image
                         source={require('../../img/Plus.png')}
                         style={styles.plusIMG}

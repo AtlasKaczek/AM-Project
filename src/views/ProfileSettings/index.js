@@ -34,10 +34,10 @@ export function ProfileSettings({ navigation }) {
         }
         
         setUsername(userData ? userData.username : "");
-        setFullName(userData ? userData.fullName : "");
-        setCountry(userData ? userData.country : "Poland");
-        setPhone(userData ? userData.phone : "");
-        setSelectedInterests(userData ? userData.selectedInterests : []);
+        setFullName(userData.fullName ? userData.fullName : "");
+        setCountry(userData.country ? userData.country : "Poland");
+        setPhone(userData.phone ? userData.phone : "");
+        setSelectedInterests(userData.selectedInterests ? userData.selectedInterests : []);
       })();
     }
 

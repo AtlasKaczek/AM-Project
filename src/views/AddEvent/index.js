@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { styles } from "./style";
 import DatePicker from "../../components/datepicker";
@@ -67,12 +68,13 @@ export function AddEvent({ navigation }) {
     ];
 
     const prepareEvent = async () => {
+        const selectedCoordinates = route.params?.selectedCoordinates;
         const eventDate = `${selectedDay}-${selectedMonth}-${selectedYear}`;
         const newEvent = {
             name: eventName,
             desc: note,
             category: category,
-            localization: "",
+            localization: selectedCoordinates,
             friends: [],
             time_start: startTime,
             time_end: endTime,
@@ -90,10 +92,15 @@ export function AddEvent({ navigation }) {
                 console.error("Error adding event:", error.message);
               }
         }
+        navigation.goBack();
     }
 
     const addFriendToEvent = () => {
         // TODO: Add implementation
+    }
+
+    const addLocationToEvent = () => {
+        navigation.navigate("MapScreen");
     }
 
     const renderCategoryRows = () => {
@@ -167,7 +174,7 @@ export function AddEvent({ navigation }) {
                 <Text style={styles.title2}>Dodaj lokalizację wydarzenia</Text>
                 <TouchableOpacity
                     style={styles.plusButton}
-                    onPress={() => addFriendToEvent()}>
+                    onPress={() => addLocationToEvent()}>
                     <Image
                         source={require('../../img/Plus.png')}
                         style={styles.plusIMG}

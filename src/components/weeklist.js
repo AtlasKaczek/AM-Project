@@ -51,7 +51,7 @@ const getDayName = (dateString) => {
     return daysOfWeek[dayIndex];
 };
 
-const WeekList = ({onAddEventPress}) => {
+const WeekList = ({ onAddEventPress }) => {
     const [monthList, setMonthList] = useState([]);
     const [list, setList] = useState([]);
 
@@ -61,7 +61,7 @@ const WeekList = ({onAddEventPress}) => {
         const currentMonth = new Date().getMonth() + 1;
         const currentYear = new Date().getFullYear();
         const startOfWeek = currentDay - (currentWeekDay === 0 ? 7 : 0) + (currentDay === 0 ? -5 : 1);
-    
+
         const updatedMonthList = [];
         for (let day = startOfWeek; day <= startOfWeek + 6; day++) {
             const dateString = `${day >= 10 ? day : `0${day}`}-${currentMonth}-${currentYear}`;
@@ -71,50 +71,48 @@ const WeekList = ({onAddEventPress}) => {
                 events: eventsForDate,
             });
         }
-    
+
         setMonthList(updatedMonthList);
     };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const updatedList = await getEventList();
-        setList(updatedList);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const updatedList = await getEventList();
+                setList(updatedList);
 
-        
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
-      }
-    };
 
-    const user = auth.currentUser;
-    if (user) {
-      const userEventListRef = ref(database, `users/${user.uid}/eventList`);
-      
-      // Use onValue to listen for changes in the data
-      onValue(userEventListRef, (snapshot) => {
-        // The snapshot.val() contains the updated data
-        const updatedList = snapshot.val()
-          ? Object.entries(snapshot.val()).map(([date, events]) => {
-              return {
-                date,
-                events: Object.entries(events).map(([eventId, eventData]) => {
-                  return {
-                    eventId,
-                    ...eventData,
-                  };
-                }),
-              };
-            })
-          : [];
-    
-        setList(updatedList);
-        getCurrentMonthList(updatedList);
-    });
-    }
-    
-    fetchData();
-  }, []);
+            } catch (error) {
+                console.error("Error fetching data:", error.message);
+            }
+        };
+
+        const user = auth.currentUser;
+        if (user) {
+            const userEventListRef = ref(database, `users/${user.uid}/eventList`);
+
+            onValue(userEventListRef, (snapshot) => {
+                const updatedList = snapshot.val()
+                    ? Object.entries(snapshot.val()).map(([date, events]) => {
+                        return {
+                            date,
+                            events: Object.entries(events).map(([eventId, eventData]) => {
+                                return {
+                                    eventId,
+                                    ...eventData,
+                                };
+                            }),
+                        };
+                    })
+                    : [];
+
+                setList(updatedList);
+                getCurrentMonthList(updatedList);
+            });
+        }
+
+        fetchData();
+    }, []);
 
     return (
         <FlatList
@@ -143,11 +141,12 @@ const WeekList = ({onAddEventPress}) => {
                                 <Text style={styles.noEventsText}>No events for today</Text>
                             </View>
                         )}
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styles.plusButton}
                             onPress={() => {
                                 const [day, month, year] = item.date.split('-').map(Number);
-                                onAddEventPress(day, month, year)}}>
+                                onAddEventPress(day, month, year)
+                            }}>
                             <Image
                                 source={require('../img/Plus.png')}
                                 style={styles.plusIMG}

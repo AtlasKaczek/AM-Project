@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { styles } from "./style";
-import { auth } from "../../database/firebaseConfig";
-import { signOut, getAuth } from "firebase/auth";
+import { auth, database } from "../../database/firebaseConfig";
+import { signOut } from "firebase/auth";
+import { useNavigation } from '@react-navigation/native';
+import { get, ref } from 'firebase/database';
 
-export function Profile({ navigation }) {
+export function Profile() {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
+  const [profileImage, setProfileImage] = useState(require('../../img/Profil.png'));
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
       setUserName(user.displayName);
       setEmail(user.email);
+
+      (async () => {
+        const userSnapshot = await get(ref(database, `users/${user.uid}`));
+        const userData = userSnapshot.val();
+
+        if (userData && userData.photoURL) {
+          setProfileImage({ uri: userData.photoURL });
+        }
+      })();
     }
   }, []);
 
@@ -22,23 +36,25 @@ export function Profile({ navigation }) {
         navigation.navigate('Login');
       })
       .catch(error => {
-        // bledy
+        // Obsłuż błędy
       });
   };
 
   const handleNavigateToSettings = () => {
     navigation.navigate('Settings');
   };
+
   const handleNavigateToCalendar = () => {
     navigation.navigate('DrawerNav');
   };
+
   const handleNavigateToFriends = () => {
     navigation.navigate('Friends');
   };
+
   const handleNavigateToFAQ = () => {
     navigation.navigate('FAQ');
   };
-  
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -56,7 +72,7 @@ export function Profile({ navigation }) {
       {/* Zdjęcie profilowe, nazwa użytkownika i email */}
       <View style={styles.profileInfoContainer}>
         <Image
-          source={require('../../img/Profil.png')}
+          source={profileImage}
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>

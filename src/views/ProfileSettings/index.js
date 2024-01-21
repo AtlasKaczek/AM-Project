@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput, ScrollView, Modal, FlatList } from "react-native";
 import { styles } from "./style";
-import { auth, database } from "../../database/firebaseConfig";
+import { auth, database, storage } from "../../database/firebaseConfig"; // Zaktualizowano importy
 import { set, ref, get } from 'firebase/database';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Importujemy funkcje z Firebase Storage
 
 const countries = ["USA", "Canada", "Poland", "Germany", "France", "UK", "Italy", "Spain"]; 
 const interestsData = ["Sport", "Muzyka", "Podróże", "Gry", "Film", "Książki", "Gotowanie", "Sztuka", "Moda"];
@@ -67,21 +68,58 @@ export function ProfileSettings({ navigation }) {
         const userSnapshot = await get(ref(database, `users/${user.uid}`));
         const userData = userSnapshot.val();
 
-        const updatedUserData = {
-          ...userData,
-          photoURL: profileImage ? profileImage.uri : userData.photoURL,
-          username: username,
-          fullName: fullName,
-          country: country,
-          phone: phone,
-          selectedInterests: selectedInterests,
-          email: currentEmail,
-        };
+        // Przesyłanie zdjęcia do Firebase Storage i uzyskiwanie URL
+        if (profileImage) {
+          const imageUri = profileImage.uri;
+          const imageName = `${user.uid}_profile_picture.jpg`;
+          const imageRef = storageRef(storage, `Profile Pictures/${imageName}`);
+          const blob = await fetch(imageUri).then((response) => response.blob());
+
+          const uploadTask = uploadBytesResumable(imageRef, blob);
+
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log(`Postęp przesyłania zdjęcia: ${progress}%`);
+            },
+            (error) => {
+              console.error("Błąd podczas przesyłania zdjęcia:", error);
+            },
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              console.log("Pomyślnie przesłano i pobrano URL:", downloadURL);
+
+              const updatedUserData = {
+                ...userData,
+                photoURL: downloadURL, // Aktualizujemy URL zdjęcia
+                username: username,
+                fullName: fullName,
+                country: country,
+                phone: phone,
+                selectedInterests: selectedInterests,
+                email: currentEmail,
+              };
+      
+              await set(ref(database, `users/${user.uid}`), updatedUserData);
+              navigation.navigate('Profile');
+            }
+          );
+        } else {
+          // Jeśli nie ma nowego zdjęcia, aktualizujemy tylko inne dane użytkownika
+          const updatedUserData = {
+            ...userData,
+            username: username,
+            fullName: fullName,
+            country: country,
+            phone: phone,
+            selectedInterests: selectedInterests,
+            email: currentEmail,
+          };
   
-        await set(ref(database, `users/${user.uid}`), updatedUserData);
-  
-        navigation.navigate('Profile');
-  
+          await set(ref(database, `users/${user.uid}`), updatedUserData);
+          navigation.navigate('Profile');
+        }
       } catch (error) {
         console.error("Błąd podczas zapisywania zmian:", error);
       }
@@ -155,111 +193,83 @@ export function ProfileSettings({ navigation }) {
       {/* Zmiana zdjęcia profilowego */}
       <View style={styles.profileImageContainer}>
         <TouchableWithoutFeedback onPress={handleOpenImagePicker}>
-          {profileImage ? (
-            <Image source={profileImage} style={styles.profileImage} />
-          ) : (
-            <Image source={require('../../img/Profil.png')} style={styles.profileImage} />
-          )}
+          <Image
+            source={profileImage ? profileImage : require('../../img/Profil.png')}
+            style={styles.profileImage}
+          />
         </TouchableWithoutFeedback>
         <TouchableOpacity onPress={handleOpenImagePicker}>
           <Text style={styles.changeImageText}>Zmień zdjęcie profilowe</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Edycja nazwy użytkownika */}
-      <View style={styles.usernameContainer}>
-        <Text style={styles.label}>Nazwa użytkownika:</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-        />
-      </View>
-
-      {/* Edycja pełnego imienia i nazwiska */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Imię i nazwisko:</Text>
-        <TextInput
-          style={styles.input}
-          value={fullName}
-          onChangeText={(text) => setFullName(text)}
-        />
-      </View>
-
-      {/* Wybór kraju */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Kraj:</Text>
-        <TouchableOpacity onPress={() => setCountryModalVisible(true)}>
-          <Text style={styles.picker}>{country}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Edycja numeru telefonu */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Numer telefonu:</Text>
-        <TextInput
-          style={styles.input}
-          value={phone}
-          onChangeText={(text) => setPhone(text)}
-        />
-      </View>
-
-      {/* Wybór zainteresowań */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Zainteresowania:</Text>
-        <TextInput
-          style={styles.input}
-          value={selectedInterests.join(', ')}
-          onFocus={handleOpenInterestModal}
-        />
-      </View>
-
-      {/* Przycisk do zapisywania zmian */}
-      <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-        <Text style={styles.saveButtonText}>Zapisz zmiany</Text>
-      </TouchableOpacity>
-
-      {/* Modal z wyborem zainteresowań */}
+      {/* Modal wyboru zdjęcia profilowego */}
       <Modal
-        visible={interestModalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={handleCloseInterestModal}
+        visible={imagePickerModalVisible}
+        onRequestClose={() => {
+          setImagePickerModalVisible(false);
+        }}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.interestModalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={handleCloseInterestModal}>
+          <View style={styles.imagePickerModalContent}>
+            <TouchableOpacity onPress={handleOpenCamera} style={styles.imagePickerButton}>
+              <Text style={styles.imagePickerButtonText}>Zrób zdjęcie</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleOpenGallery} style={styles.imagePickerButton}>
+              <Text style={styles.imagePickerButtonText}>Wybierz z galerii</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setImagePickerModalVisible(false)}>
               <Image
                 source={require('../../img/closeIcon.png')}
                 style={styles.closeIcon}
               />
             </TouchableOpacity>
-            <FlatList
-              data={interestsData}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.interestItem}
-                  onPress={() => handleInterestSelect(item)}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
           </View>
         </View>
       </Modal>
 
-      {/* Modal z wyborem kraju */}
+      {/* Pole na nazwę użytkownika */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Nazwa użytkownika</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setUsername(text)}
+          value={username}
+        />
+      </View>
+
+      {/* Pole na imię i nazwisko */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Imię i nazwisko</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setFullName(text)}
+          value={fullName}
+        />
+      </View>
+
+      {/* Pole na kraj */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Kraj</Text>
+        <TouchableOpacity onPress={() => setCountryModalVisible(true)}>
+          <Text style={styles.input}>{country}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal wyboru kraju */}
       <Modal
-        visible={countryModalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setCountryModalVisible(false)}
+        visible={countryModalVisible}
+        onRequestClose={() => {
+          setCountryModalVisible(false);
+        }}
       >
         <View style={styles.modalContainer}>
           <View style={styles.interestModalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setCountryModalVisible(false)}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setCountryModalVisible(false)}>
               <Image
                 source={require('../../img/closeIcon.png')}
                 style={styles.closeIcon}
@@ -269,10 +279,7 @@ export function ProfileSettings({ navigation }) {
               data={countries}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.interestItem}
-                  onPress={() => handleCountrySelect(item)}
-                >
+                <TouchableOpacity onPress={() => handleCountrySelect(item)} style={styles.interestItem}>
                   <Text>{item}</Text>
                 </TouchableOpacity>
               )}
@@ -281,36 +288,58 @@ export function ProfileSettings({ navigation }) {
         </View>
       </Modal>
 
-      {/* Modal z wyborem źródła zdjęcia */}
+      {/* Pole na numer telefonu */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Numer telefonu</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setPhone(text)}
+          value={phone}
+        />
+      </View>
+
+      {/* Zainteresowania */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Zainteresowania</Text>
+        <TouchableOpacity onPress={handleOpenInterestModal}>
+          <Text style={styles.input}>{selectedInterests.join(", ")}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal wyboru zainteresowań */}
       <Modal
-        visible={imagePickerModalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setImagePickerModalVisible(false)}
+        visible={interestModalVisible}
+        onRequestClose={() => {
+          setInterestModalVisible(false);
+        }}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.imagePickerModalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setImagePickerModalVisible(false)}>
+          <View style={styles.interestModalContent}>
+            <FlatList
+              data={interestsData}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handleInterestSelect(item)} style={styles.interestItem}>
+                  <Text style={styles.modalItemText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity style={styles.closeButton} onPress={handleCloseInterestModal}>
               <Image
                 source={require('../../img/closeIcon.png')}
                 style={styles.closeIcon}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.imagePickerButton}
-              onPress={handleOpenCamera}
-            >
-              <Text style={styles.imagePickerButtonText}>Zrób zdjęcie aparatem</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.imagePickerButton}
-              onPress={handleOpenGallery}
-            >
-              <Text style={styles.imagePickerButtonText}>Wybierz z galerii</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
+
+      {/* Przycisk Zapisz zmiany */}
+      <TouchableOpacity onPress={handleSaveChanges} style={styles.saveButton}>
+        <Text style={styles.saveButtonText}>Zapisz zmiany</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }

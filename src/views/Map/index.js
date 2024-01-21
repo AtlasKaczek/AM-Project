@@ -32,9 +32,8 @@ export function MapScreen({ navigation }) {
                 showsUserLocation={true}
                 initialRegion={{
                     latitude: userLocation.latitude,
-                    longitude: userLocation.longitude,
+                    longitude: userLocation.longitude
                 }}>
-
             </MapView>
         </View>
     );

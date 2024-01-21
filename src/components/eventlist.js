@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { auth, database } from "../database/firebaseConfig";
-import { ref, get } from 'firebase/database';
+import { ref, get, onValue } from 'firebase/database';
 
 const getEventList = async () => {
     const user = auth.currentUser;
@@ -84,7 +84,14 @@ const EventList = ({ selectedDay, selectedMonth, selectedYear, onAddEventPress }
 
 
     useEffect(() => {
-        fetchData();
+        const user = auth.currentUser;
+        if (user) {
+            const userEventListRef = ref(database, `users/${user.uid}/eventList`);
+
+            onValue(userEventListRef, (snapshot) => {
+                fetchData();
+            });
+        }
       }, []);
 
     useEffect(() => {

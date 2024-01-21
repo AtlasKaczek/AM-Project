@@ -31,13 +31,21 @@ export function Month({ navigation }) {
   };
 
   const onAddEventPress = () => {
-    navigation.navigate('AddEvent', {
-      selectedDay: selectedDay,
-      selectedMonth: selectedMonth,
-      selectedYear: selectedYear
-    });
+    if (selectedDay === null || selectedMonth === null || selectedYear === null) {
+      navigation.navigate('AddEvent', {
+        selectedDay: new Date().getDate(),
+        selectedMonth: currentMonth,
+        selectedYear: currentYear
+      });
+    } else {
+      navigation.navigate('AddEvent', {
+        selectedDay: selectedDay,
+        selectedMonth: selectedMonth,
+        selectedYear: selectedYear
+      });
+    }
   };
-
+  
   return (
     <ScrollView>
       <Calendar

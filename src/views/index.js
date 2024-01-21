@@ -10,6 +10,7 @@ import { Profile } from "./Profile";
 import { Friends } from "./Friends";
 import { AddEvent } from "./AddEvent";
 import { AddFriends } from "./AddFriends";
+import { MapScreen } from "./Map";
 import { FAQ } from "./FAQ";
 
-export { Login, Register, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile, Friends, Splash, AddFriends, FAQ, AddEvent }
+export { Login, Register, Settings, ProfileSettings, SecuritySettings, DrawerNav, Privacy, Profile, Friends, Splash, AddFriends, FAQ, AddEvent, MapScreen }
